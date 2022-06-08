@@ -223,6 +223,21 @@ char **tokenize_line_stdin(char *line)
   /***** BEGIN ANSWER HERE *****/
 
   /*********************/
+  // printf("*tokens is %s \n tokens is %s \n ", *tokens, tokens);
+  if (tokens == NULL){
+    perror("Unable to allocate memory for char");
+    return 0;
+  }
+  
+  token = strtok(line,SHELL_INPUT_DELIM);
+
+  while(token != NULL){
+
+    tokens[position] = token;
+    token = strtok(NULL,SHELL_INPUT_DELIM);
+    position+=1;
+
+  }
 
   return tokens;
 }
@@ -275,8 +290,14 @@ void main_loop(void)
 
 int main(int argc, char **argv)
 {
+  printf("Shell Run successful. Running now: \n");
   char* line = read_line_stdin();
   printf("The fetched line is : %s \n", line);
+  
+  char** args = tokenize_line_stdin(line);
+  printf("The first token is %s \n", args[0]);
+  printf("The second token is %s \n", args[1]);
+  
   return 0;
 }
 
