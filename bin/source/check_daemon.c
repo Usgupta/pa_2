@@ -22,12 +22,24 @@ int execute()
 
    /* TASK 7 */
    // 1. Open the file output.txt
-   // 2. Fetch line by line using getline()
-   // 3. Increase the daemon count whenever we encounter a line
-   // 4. Store the count inside live_daemons
+
+
+
+
    // DO NOT PRINT ANYTHING TO THE OUTPUT
 
    /***** BEGIN ANSWER HERE *****/
+
+   fptr = fopen("output.txt","r");
+   // 2. Fetch line by line using getline()
+
+   size_t buf_size = SHELL_BUFFERSIZE;
+    char *line = malloc(sizeof(char) * buf_size); // allocate memory space for the line*
+
+
+   while(getline(&line, &buf_size, fptr) != -1){
+      live_daemons+=1;
+   }
 
    /*********************/
    if (live_daemons == 0)
