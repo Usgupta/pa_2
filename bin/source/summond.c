@@ -15,6 +15,74 @@ static int create_daemon()
     /* TASK 6 */
     // Incantation on creating a daemon with fork() twice
 
+    pid_t pid = fork();
+
+    if(pid<0){
+
+        perror("failed to create child process");
+        return 0;
+    }
+
+    else if(pid>0){
+//parent process
+        exit(1);
+    }
+
+    else{
+
+        setsid();
+        signal(SIGHUP, SIG_IGN);
+
+        pid_t pid_new = fork();
+
+        if(pid<0){
+
+            perror("failed to create child process");
+            return 0;
+        }
+        
+        else if(pid>0){
+            exit(1);
+        }
+
+        else{
+
+            umask(0);
+            if (chdir("/")<0){
+
+                perror("couldnt change to root directory");
+                exit(0);
+
+            }
+
+            else{
+
+                /* Close all open file descriptors */
+                int x;
+                for (x = sysconf(_SC_OPEN_MAX); x>=0; x--)
+                {
+                    close (x);
+                }
+                
+                /*
+                * Attach file descriptors 0, 1, and 2 to /dev/null. */
+                int fd0 = open("/dev/null", O_RDWR);
+                int fd1 = dup(0);
+                int fd2 = dup(0);
+
+                // returning for main function
+                return 0;
+
+
+            }
+
+            
+
+        }
+
+        
+    }
+
     // 1. Fork() from the parent process
     // 2. Close parent with exit(1)
     // 3. On child process (this is intermediate process), call setsid() so that the child becomes session leader to lose the controlling TTY
