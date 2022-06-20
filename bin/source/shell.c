@@ -168,55 +168,69 @@ int process_command(char **args)
 
   /***** BEGIN ANSWER HERE *****/
 
+  // 1. Check if args[0] is NULL. If it is, an empty command is entered, return 1
+
   if(args[0] == NULL){
     return 1;
   }
 
-  if(strcmp(args[0],"cd") == 0){
-    shell_cd(args);
+    // 2. Otherwise, check if args[0] is in any of our builtin_commands: cd, help, exit, or usage.
+
+
+  else if(strcmp(args[0],"cd") == 0){
+    return shell_cd(args);
   }
 
-  if(strcmp(args[0],"help") == 0){
-    shell_help(args);
+  else if(strcmp(args[0],"help") == 0){
+    return shell_help(args);
   }
 
-  if(strcmp(args[0],"exit") == 0){
+  else if(strcmp(args[0],"exit") == 0){
 
-    shell_exit(args);
+    return shell_exit(args);
   }
 
-  if(strcmp(args[0],"usage") == 0){
-    shell_usage(args);
+  else if(strcmp(args[0],"usage") == 0){
+    return shell_usage(args);
   }
-
-  pid_t pid = fork();
-
-  if(pid<0){
-    perror("failed to fork");
-    return 1;
-  }
-
-  else if(pid==0){
-    exec_sys_prog(args);
-  }
+  
+  // 3. If conditions in (2) are satisfied, call builtin shell commands, otherwise perform fork() to exec the system program. Check if fork() is successful.
 
   else{
 
-    int status;
-    waitpid(pid, &status, WUNTRACED);        
-    // if child terminates properly, WIFEXITED(status) returns TRUE
-    if (WIFEXITED(status)){
-      child_exit_status = WEXITSTATUS(status);
-      }
+    pid_t pid = fork();
 
-  } 
+    if(pid<0){
+      perror("failed to fork");
+      return 1;
+    }
+  // 4. For the child process, call exec_sys_prog(args) to execute the matching system program. exec_sys_prog is already implemented for you.
+
+    else if(pid==0){
+      exec_sys_prog(args);
+    }
+
+    else{
+
+      int status;
+      waitpid(pid, &status, WUNTRACED);        
+      // if child terminates properly, WIFEXITED(status) returns TRUE
+      if (WIFEXITED(status)){
+        child_exit_status = WEXITSTATUS(status);
+        }
+    }
+
+    if (child_exit_status != 1){
+        printf("Command %s has terminated abruptly.\n", args[0]);
+        }
+      return 1;
+
+
+  }
+  
 
   /*********************/
-  if (child_exit_status != 1)
-  {
-    printf("Command %s has terminated abruptly.\n", args[0]);
-  }
-  return 1;
+  
 }
 
 /**
@@ -337,9 +351,6 @@ void main_loop(void)
 
     free(line);
     free(args);
-
-
-
 
     // do{
 
