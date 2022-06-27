@@ -18,9 +18,8 @@ static int create_daemon()
     pid_t pid = fork();
 
     if(pid<0){
-
         perror("failed to create child process");
-        return 0;
+        exit(1);
     }
 
     else if(pid>0){
@@ -35,13 +34,12 @@ static int create_daemon()
 
         pid_t pid_new = fork();
 
-        if(pid<0){
-
+        if(pid_new<0){
             perror("failed to create child process");
-            return 0;
+            exit(1);
         }
         
-        else if(pid>0){
+        else if(pid_new>0){
             exit(1);
         }
 

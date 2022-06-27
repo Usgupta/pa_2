@@ -213,17 +213,28 @@ int process_command(char **args)
     else{
 
       int status;
-      waitpid(pid, &status, WUNTRACED);        
+      waitpid(pid, &status, WUNTRACED); 
+      child_exit_status = WEXITSTATUS(status); 
+      if (child_exit_status != 1){
+        printf("Command %s has terminated abruptly.\n", args[0]);
+        }  
+      return WEXITSTATUS(status);
+
       // if child terminates properly, WIFEXITED(status) returns TRUE
-      if (WIFEXITED(status)){
-        child_exit_status = WEXITSTATUS(status);
-        }
+      // if (WIFEXITED(status)){
+      //   child_exit_status = WEXITSTATUS(status);
+      //   }
+
+      // if (child_exit_status != 1){
+      //   printf("Command %s has terminated abruptly.\n", args[0]);
+      //   }
+      // return 1;
     }
 
-    if (child_exit_status != 1){
-        printf("Command %s has terminated abruptly.\n", args[0]);
-        }
-      return 1;
+    // if (child_exit_status != 1){
+    //     printf("Command %s has terminated abruptly.\n", args[0]);
+    //     }
+    //   return 1;
 
 
   }
@@ -341,7 +352,7 @@ void main_loop(void)
     printf(" CSEShell\n↳ ");
     reset();
     fflush(stdout); // clear the buffer and move the output to the console using fflush
-
+    // fflush(stdin); // clear the buffer and move the output to the console using fflush
     /***** BEGIN ANSWER HERE *****/
     // status = shell_exit(args); // remove this line when you work on this task
 
@@ -361,9 +372,6 @@ void main_loop(void)
 
     // }while(pr_cd =)
     
-
-
-
     /*********************/
   } while (status);
 }
