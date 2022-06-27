@@ -208,6 +208,7 @@ int process_command(char **args)
 
     else if(pid==0){
       exec_sys_prog(args);
+      return 1;
     }
 
     else{
