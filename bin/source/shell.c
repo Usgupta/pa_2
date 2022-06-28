@@ -186,7 +186,6 @@ int process_command(char **args)
   }
 
   else if(strcmp(args[0],"exit") == 0){
-
     return shell_exit(args);
   }
 
@@ -207,24 +206,23 @@ int process_command(char **args)
   // 4. For the child process, call exec_sys_prog(args) to execute the matching system program. exec_sys_prog is already implemented for you.
 
     else if(pid==0){
-      exec_sys_prog(args);
-      return 1;
+      return exec_sys_prog(args);
+      // return 1;
     }
 
     else{
-
       int status;
       waitpid(pid, &status, WUNTRACED); 
-      child_exit_status = WEXITSTATUS(status); 
-      if (child_exit_status != 1){
-        printf("Command %s has terminated abruptly.\n", args[0]);
-        }  
-      return WEXITSTATUS(status);
+      // child_exit_status = WEXITSTATUS(status); 
+      // if (child_exit_status != 1){
+      //   printf("Command %s has terminated abruptly.\n", args[0]);
+      //   }  
+      // return WEXITSTATUS(status);
 
       // if child terminates properly, WIFEXITED(status) returns TRUE
-      // if (WIFEXITED(status)){
-      //   child_exit_status = WEXITSTATUS(status);
-      //   }
+      if (WIFEXITED(status)){
+        child_exit_status = WEXITSTATUS(status);
+        }
 
       // if (child_exit_status != 1){
       //   printf("Command %s has terminated abruptly.\n", args[0]);
@@ -232,17 +230,14 @@ int process_command(char **args)
       // return 1;
     }
 
-    // if (child_exit_status != 1){
-    //     printf("Command %s has terminated abruptly.\n", args[0]);
-    //     }
-    //   return 1;
-
-
   }
-  
 
   /*********************/
-  
+
+    if (child_exit_status != 1){
+        printf("Command %s has terminated abruptly.\n", args[0]);
+        }
+    return 1;
 }
 
 /**
@@ -309,6 +304,7 @@ char **tokenize_line_stdin(char *line)
     position+=1;
 
   }
+  tokens[position] = "\0";
 
   current_number_tokens = position;
 
