@@ -169,14 +169,10 @@ int process_command(char **args)
   /***** BEGIN ANSWER HERE *****/
 
   // 1. Check if args[0] is NULL. If it is, an empty command is entered, return 1
-
   if(args[0] == NULL){
     return 1;
   }
-
     // 2. Otherwise, check if args[0] is in any of our builtin_commands: cd, help, exit, or usage.
-
-
   else if(strcmp(args[0],"cd") == 0){
     return shell_cd(args);
   }
@@ -204,40 +200,26 @@ int process_command(char **args)
       return 1;
     }
   // 4. For the child process, call exec_sys_prog(args) to execute the matching system program. exec_sys_prog is already implemented for you.
-
     else if(pid==0){
       return exec_sys_prog(args);
       // return 1;
     }
-
     else{
       int status;
-      waitpid(pid, &status, WUNTRACED); 
-      // child_exit_status = WEXITSTATUS(status); 
-      // if (child_exit_status != 1){
-      //   printf("Command %s has terminated abruptly.\n", args[0]);
-      //   }  
-      // return WEXITSTATUS(status);
-
-      // if child terminates properly, WIFEXITED(status) returns TRUE
+      waitpid(pid, &status, WUNTRACED);
       if (WIFEXITED(status)){
         child_exit_status = WEXITSTATUS(status);
         }
-
+      return WEXITSTATUS(status);
       // if (child_exit_status != 1){
-      //   printf("Command %s has terminated abruptly.\n", args[0]);
-      //   }
+      // printf("Command %s has terminated abruptly.\n", args[0]);
+      // }
       // return 1;
     }
-
   }
 
   /*********************/
 
-    if (child_exit_status != 1){
-        printf("Command %s has terminated abruptly.\n", args[0]);
-        }
-    return 1;
 }
 
 /**
@@ -304,7 +286,7 @@ char **tokenize_line_stdin(char *line)
     position+=1;
 
   }
-  tokens[position] = "\0";
+  tokens[position] = '\0';
 
   current_number_tokens = position;
 
@@ -395,3 +377,60 @@ int main(int argc, char **argv)
 
   return 0;
 }
+
+
+//Task 1
+// int main(int argc, char **argv)
+// {
+ 
+//  char* line = read_line_stdin();
+//  printf("The fetched line is : %s \n", line);
+ 
+//  return 0;
+// }
+
+
+// Task 2
+
+// int main(int argc, char **argv)
+// {
+ 
+//  printf("Shell Run successful. Running now: \n");
+ 
+//  char* line = read_line_stdin();
+//  printf("The fetched line is : %s \n", line);
+ 
+//  char** args = tokenize_line_stdin(line);
+//  printf("The first token is %s \n", args[0]);
+//  printf("The second token is %s \n", args[1]);
+ 
+//  return 0;
+// }
+
+// Task 3
+// int main(int argc, char **argv)
+// {
+
+//   printf("Shell Run successful. Running now: \n");
+
+//   char *line = read_line_stdin();
+//   printf("The fetched line is : %s \n", line);
+
+//   char **args = tokenize_line_stdin(line);
+//   printf("The first token is %s \n", args[0]);
+//   printf("The second token is %s \n", args[1]);
+
+//   // Setup path
+//   if (getcwd(output_file_path, sizeof(output_file_path)) != NULL)
+//   {
+//     printf("Current working dir: %s\n", output_file_path);
+//   }
+//   else
+//   {
+//     perror("getcwd() error, exiting now.");
+//     return 1;
+//   }
+//   process_command(args);
+
+//   return 0;
+// }
