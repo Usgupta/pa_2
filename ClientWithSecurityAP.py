@@ -41,6 +41,12 @@ def main(args):
         s.connect((server_address, port))
         print("Connected")
 
+        #Send the authentication message
+        s.sendall(convert_int_to_bytes(3))
+        authmsg_bytes = bytes('./source/files/file.txt', encoding="utf8")
+        s.sendall(convert_int_to_bytes(len(authmsg_bytes)))
+        s.sendall(authmsg_bytes)
+
         while True:
             filename = input("Enter a filename to send (enter -1 to exit):")
 
