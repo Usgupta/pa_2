@@ -40,6 +40,9 @@ def main(args):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((server_address, port))
         print("Connected")
+        s.listen()
+
+
 
         while True:
             filename = input("Enter a filename to send (enter -1 to exit):")

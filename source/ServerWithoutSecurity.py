@@ -52,6 +52,8 @@ def main(args):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.bind((address, port))
             s.listen()
+            s.connect((address, port))
+            print("Connected")
 
             client_socket, client_address = s.accept()
             with client_socket:
@@ -93,7 +95,7 @@ def main(args):
                             print("Closing connection...")
                             s.close()
                             break
-
+                       
     except Exception as e:
         print(e)
         s.close()

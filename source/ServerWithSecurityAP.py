@@ -28,6 +28,8 @@ def convert_bytes_to_int(xbytes):
     return int.from_bytes(xbytes, "big")
 
 
+
+
 def read_bytes(socket, length):
     """
     Reads the specified length of bytes from the given socket and returns a bytestring
@@ -52,6 +54,7 @@ def main(args):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.bind((address, port))
             s.listen()
+           
 
             client_socket, client_address = s.accept()
             with client_socket:
@@ -93,10 +96,48 @@ def main(args):
                             print("Closing connection...")
                             s.close()
                             break
+                        case 3:
+                            try:
+                                with open("/Users/visshal/Documents/GitHub/pa_2/source/auth/_private_key.pem", mode="r", encoding="utf8") as key_file:
+                                    private_key = serialization.load_pem_private_key(bytes(key_file.read(), encoding="utf8"), password=None )
+                            except Exception as e:
+                                print(e)
+                            authmsg_len = convert_bytes_to_int(read_bytes(client_socket, 8))
+                            authmsg = read_bytes(client_socket, authmsg_len)
+                            signed_message = private_key.sign(
+                                authmsg, # message in bytes format
+                                padding.PSS(
+                                    mgf=padding.MGF1(hashes.SHA256()),
+                                    salt_length=padding.PSS.MAX_LENGTH,
+                                    ),
+                                    hashes.SHA256(), # hashing algorithm used to hash the data before encryption
+                                    )
+                            # Send Authenticated message with signature 
+                         
+                            client_socket.sendall(convert_int_to_bytes(len(signed_message)))
+                            client_socket.sendall(signed_message)
+
+
+                            #Send Certificate
+                            with open('/Users/visshal/Documents/GitHub/pa_2/source/auth/server_signed.crt', mode="rb") as fp:
+                                data = fp.read()
+                                client_socket.sendall(convert_int_to_bytes(len(data)))
+                                client_socket.sendall(data)
+
+
+                            
+                            
+
+
+                            
+
+
+                         
 
     except Exception as e:
         print(e)
         s.close()
+        
 
 
 if __name__ == "__main__":
