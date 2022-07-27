@@ -65,7 +65,7 @@ def main(args):
         server_cert_len = s.recv(8);
         server_cert_raw= s.recv(convert_bytes_to_int( server_cert_len ));
 
-        print("signed_cert:",server_cert_raw)
+
 
 
 
@@ -89,33 +89,32 @@ def main(args):
                  ),
                   hashes.SHA256(),
                   )
+                  
+        while(server_cert.not_valid_before <= datetime.utcnow() <= server_cert.not_valid_after):
 
+            while True:
+                filename = input("Enter a filename to send (enter -1 to exit):")
 
-        
+                while filename != "-1" and (not pathlib.Path(filename).is_file()):
+                    filename = input("Invalid filename. Please try again:")
 
-        while True:
-            filename = input("Enter a filename to send (enter -1 to exit):")
+                if filename == "-1":
+                    s.sendall(convert_int_to_bytes(2))
+                    break
 
-            while filename != "-1" and (not pathlib.Path(filename).is_file()):
-                filename = input("Invalid filename. Please try again:")
+                filename_bytes = bytes(filename, encoding="utf8")
 
-            if filename == "-1":
-                s.sendall(convert_int_to_bytes(2))
-                break
+                # Send the filename
+                s.sendall(convert_int_to_bytes(0))
+                s.sendall(convert_int_to_bytes(len(filename_bytes)))
+                s.sendall(filename_bytes)
 
-            filename_bytes = bytes(filename, encoding="utf8")
-
-            # Send the filename
-            s.sendall(convert_int_to_bytes(0))
-            s.sendall(convert_int_to_bytes(len(filename_bytes)))
-            s.sendall(filename_bytes)
-
-            # Send the file
-            with open(filename, mode="rb") as fp:
-                data = fp.read()
-                s.sendall(convert_int_to_bytes(1))
-                s.sendall(convert_int_to_bytes(len(data)))
-                s.sendall(data)
+                # Send the file
+                with open(filename, mode="rb") as fp:
+                    data = fp.read()
+                    s.sendall(convert_int_to_bytes(1))
+                    s.sendall(convert_int_to_bytes(len(data)))
+                    s.sendall(data)
 
         # Close the connection
         s.sendall(convert_int_to_bytes(2))
