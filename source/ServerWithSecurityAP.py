@@ -98,7 +98,7 @@ def main(args):
                             break
                         case 3:
                             try:
-                                with open("/Users/visshal/Documents/GitHub/pa_2/source/auth/_private_key.pem", mode="r", encoding="utf8") as key_file:
+                                with open("/Users/visshal/Documents/GitHub/pa_2/source/auth/server_private_key.pem", mode="r", encoding="utf8") as key_file:
                                     private_key = serialization.load_pem_private_key(bytes(key_file.read(), encoding="utf8"), password=None )
                             except Exception as e:
                                 print(e)

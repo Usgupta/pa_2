@@ -64,12 +64,6 @@ def main(args):
         #Receive signed certificate from server
         server_cert_len = s.recv(8);
         server_cert_raw= s.recv(convert_bytes_to_int( server_cert_len ));
-
-
-
-
-
-    
         
         #Verify Certificate 
         server_cert = x509.load_pem_x509_certificate(data=server_cert_raw, backend=default_backend())
@@ -78,8 +72,10 @@ def main(args):
          padding=padding.PKCS1v15(), # padding used by CA bot to sign the the server's csr
          algorithm=server_cert.signature_hash_algorithm,
          )
+        
 
         server_public_key = server_cert.public_key()
+       
         server_public_key.verify(
             signed_message,
             authmsg_bytes,
@@ -90,7 +86,7 @@ def main(args):
                   hashes.SHA256(),
                   )
                   
-        while(server_cert.not_valid_before <= datetime.utcnow() <= server_cert.not_valid_after):
+        if (server_cert.not_valid_before <= datetime.utcnow() <= server_cert.not_valid_after):
 
             while True:
                 filename = input("Enter a filename to send (enter -1 to exit):")
