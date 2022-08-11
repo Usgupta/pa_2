@@ -112,7 +112,8 @@ def main(args):
                                     ),
                                     hashes.SHA256(), # hashing algorithm used to hash the data before encryption
                                     )
-                            # Send Authenticated message with signature 
+                            # Send Authenticated message with signature
+                            print("Type:",type(signed_message)) 
                          
                             client_socket.sendall(convert_int_to_bytes(len(signed_message)))
                             client_socket.sendall(signed_message)
