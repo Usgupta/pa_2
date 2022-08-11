@@ -105,9 +105,23 @@ def main(args):
                                     private_key = serialization.load_pem_private_key(bytes(key_file.read(), encoding="utf8"), password=None )
                             except Exception as e:
                                 print(e)
+                            
+                            # Write the file with 'recv_' prefix
+                            filename_dec = "enc_" + filename.split("/")[-1]
+
+                            with open(
+                                f"recv_files_enc/{filename_dec}", mode="wb"
+                            ) as fp:
+                                fp.write(file_data)
+                            print(
+                                f"Finished receiving file in {(time.time() - start_time)}s!"
+                            )
 
                             file_data = session_key.decrypt(file_data)
                             print(file_data)
+
+                             
+                            
 
                             # Write the file with 'recv_' prefix
                             with open(
