@@ -52,9 +52,10 @@ def main(args):
 
         #Send the authentication message
         s.sendall(convert_int_to_bytes(3))
-        authmsg_bytes = bytes('./source/files/file.txt', encoding="utf8")
-        s.sendall(convert_int_to_bytes(len(authmsg_bytes)))
-        s.sendall(authmsg_bytes)
+        nonce = datetime.now(tz=None)
+        nonce_bytes = bytes(str(nonce), encoding="utf8")
+        s.sendall(convert_int_to_bytes(len(nonce_bytes)))
+        s.sendall(nonce_bytes)
 
         #Receive authentication message:
         signed_message_len = s.recv(8);
@@ -78,7 +79,7 @@ def main(args):
        
         server_public_key.verify(
             signed_message,
-            authmsg_bytes,
+            nonce_bytes,
             padding.PSS(
                 mgf=padding.MGF1(hashes.SHA256()),
                 salt_length=padding.PSS.MAX_LENGTH,
