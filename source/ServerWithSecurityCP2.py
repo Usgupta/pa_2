@@ -125,7 +125,7 @@ def main(args):
                             break
                         case 3:
                             try:
-                                with open("/Users/visshal/Documents/GitHub/pa_2/source/auth/server_private_key.pem", mode="r", encoding="utf8") as key_file:
+                                with open("auth/server_private_key.pem", mode="r", encoding="utf8") as key_file:
                                     private_key = serialization.load_pem_private_key(bytes(key_file.read(), encoding="utf8"), password=None )
                             except Exception as e:
                                 print(e)
@@ -146,14 +146,14 @@ def main(args):
                             client_socket.sendall(signed_message)
 
                             #Send Certificate
-                            with open('/Users/visshal/Documents/GitHub/pa_2/source/auth/server_signed.crt', mode="rb") as fp:
+                            with open('auth/server_signed.crt', mode="rb") as fp:
                                 data = fp.read()
                                 client_socket.sendall(convert_int_to_bytes(len(data)))
                                 client_socket.sendall(data)
                         case 4:
                             #Get Private Key
                             try:
-                                with open("/Users/visshal/Documents/GitHub/pa_2/source/auth/server_private_key.pem", mode="r", encoding="utf8") as key_file:
+                                with open("auth/server_private_key.pem", mode="r", encoding="utf8") as key_file:
                                     private_key = serialization.load_pem_private_key(bytes(key_file.read(), encoding="utf8"), password=None )
                             except Exception as e:
                                 print(e)
