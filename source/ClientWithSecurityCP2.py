@@ -150,6 +150,10 @@ def main(args):
                 with open(filename, mode="rb") as fp:
                     data = fp.read()
                     enc_data = session_key.encrypt(data)
+                     # Write the file with 'recv_' prefix
+                    filename_enc = "enc_" + filename.split("/")[-1]
+                    with open(f"send_files_enc/{filename_enc}", mode="wb" ) as fp:
+                        fp.write(enc_data)
                     s.sendall(convert_int_to_bytes(1))
                     s.sendall(convert_int_to_bytes(len(enc_data)))
                     s.sendall(enc_data)
