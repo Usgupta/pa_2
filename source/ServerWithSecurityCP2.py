@@ -12,6 +12,7 @@ from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.backends import default_backend
+from cryptography.fernet import Fernet
 
 
 def convert_int_to_bytes(x):
@@ -75,7 +76,7 @@ def main(args):
             client_socket, client_address = s.accept()
             with client_socket:
                 while True:
-                    match convert_bytes_to_int(read_bytes(client_socket, 8)):
+                     match convert_bytes_to_int(read_bytes(client_socket, 8)):
                         case 0:
                             # If the packet is for transferring the filename
                             print("Receiving file...")
@@ -105,7 +106,7 @@ def main(args):
                             except Exception as e:
                                 print(e)
 
-                            file_data = decrypt_with_privateKey(file_data ,file_len ,private_key)
+                            file_data = session_key.decrypt(file_data)
                             print(file_data)
 
                             # Write the file with 'recv_' prefix
@@ -144,12 +145,32 @@ def main(args):
                             client_socket.sendall(convert_int_to_bytes(len(signed_message)))
                             client_socket.sendall(signed_message)
 
-
                             #Send Certificate
                             with open('/Users/visshal/Documents/GitHub/pa_2/source/auth/server_signed.crt', mode="rb") as fp:
                                 data = fp.read()
                                 client_socket.sendall(convert_int_to_bytes(len(data)))
                                 client_socket.sendall(data)
+                        case 4:
+                            #Get Private Key
+                            try:
+                                with open("/Users/visshal/Documents/GitHub/pa_2/source/auth/server_private_key.pem", mode="r", encoding="utf8") as key_file:
+                                    private_key = serialization.load_pem_private_key(bytes(key_file.read(), encoding="utf8"), password=None )
+                            except Exception as e:
+                                print(e)
+                            # Read Session Keys 
+                            key_len = convert_bytes_to_int(
+                                read_bytes(client_socket, 8)
+                            )
+
+                            #Decrypting Session Keys 
+                            encrypted_session_key_bytes = read_bytes(client_socket, key_len)
+                            decrypted_session_key_bytes = decrypt_with_privateKey(encrypted_session_key_bytes,key_len ,private_key)
+                            session_key = Fernet(decrypted_session_key_bytes) 
+
+
+
+                        
+
 
 
                             

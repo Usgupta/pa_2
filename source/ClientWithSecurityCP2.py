@@ -12,6 +12,7 @@ from cryptography.fernet import Fernet
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import padding
 from cryptography.hazmat.backends import default_backend
+from cryptography.fernet import Fernet
 
 
 def convert_int_to_bytes(x):
@@ -111,7 +112,24 @@ def main(args):
                   
         if (server_cert.not_valid_before <= datetime.utcnow() <= server_cert.not_valid_after):
 
-            while True:
+             while True:
+                # Generate Keys
+                
+                session_key_bytes = Fernet.generate_key() # generates 128-bit symmetric key as bytes
+                session_key = Fernet(session_key_bytes) # instantiate a Fernet instance with key
+
+
+                # Encrypt Keys 
+                encrypted_session_key_bytes,size = encrypt_with_publicKey(session_key_bytes,len(session_key_bytes),server_public_key)
+                # Send the keys
+                s.sendall(convert_int_to_bytes(4))
+                s.sendall(convert_int_to_bytes(size))
+                s.sendall(encrypted_session_key_bytes)
+
+
+
+
+
                 filename = input("Enter a filename to send (enter -1 to exit):")
 
                 while filename != "-1" and (not pathlib.Path(filename).is_file()):
@@ -131,12 +149,9 @@ def main(args):
                 # Send the file
                 with open(filename, mode="rb") as fp:
                     data = fp.read()
-                    enc_data,size = encrypt_with_publicKey(data,len(data),server_public_key)
-                    print(size)
-                    print(len(enc_data))
-                    
+                    enc_data = session_key.encrypt(data)
                     s.sendall(convert_int_to_bytes(1))
-                    s.sendall(convert_int_to_bytes(size))
+                    s.sendall(convert_int_to_bytes(len(enc_data)))
                     s.sendall(enc_data)
 
         # Close the connection
