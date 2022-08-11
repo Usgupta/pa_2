@@ -45,13 +45,15 @@ def read_bytes(socket, length):
 
 
 def main(args):
-    port = args[0] if len(args) > 0 else 4321
+    port = int(args[0]) if len(args) > 0 else 4321
     address = args[1] if len(args) > 1 else "localhost"
 
     try:
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.bind((address, port))
             s.listen()
+            s.connect((address, port))
+            print("Connected")
 
             client_socket, client_address = s.accept()
             with client_socket:
@@ -93,7 +95,7 @@ def main(args):
                             print("Closing connection...")
                             s.close()
                             break
-
+                       
     except Exception as e:
         print(e)
         s.close()

@@ -15,6 +15,7 @@ key = rsa.generate_private_key(
     public_exponent=65537,
     key_size=1024,
 )
+print(suffix)
 
 # Write our private key to disk for safe keeping
 with open(suffix + "_private_key.pem", "wb") as f:

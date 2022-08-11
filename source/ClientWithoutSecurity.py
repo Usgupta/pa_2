@@ -29,8 +29,8 @@ def convert_bytes_to_int(xbytes):
 
 
 def main(args):
-    server_address = args[1] if len(args) > 0 else "localhost"
-    port = args[2] if len(args) > 1 else 4321
+    port = int(args[0]) if len(args) > 0 else 4321
+    server_address = args[1] if len(args) > 1 else "localhost"
 
     start_time = time.time()
 
@@ -40,6 +40,9 @@ def main(args):
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         s.connect((server_address, port))
         print("Connected")
+        s.listen()
+
+
 
         while True:
             filename = input("Enter a filename to send (enter -1 to exit):")
@@ -70,7 +73,7 @@ def main(args):
         print("Closing connection...")
 
     end_time = time.time()
-    print(f"Program took {(end_time - start_time) / 100000}ms to run.")
+    print(f"Program took {end_time - start_time}s to run.")
 
 
 if __name__ == "__main__":
