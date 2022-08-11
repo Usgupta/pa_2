@@ -118,7 +118,7 @@ def main(args):
                             )
 
                             file_data = session_key.decrypt(file_data)
-                            print(file_data)
+                            # print(file_data)
 
                              
                             
@@ -153,7 +153,7 @@ def main(args):
                                     ),
                                     hashes.SHA256(), # hashing algorithm used to hash the data before encryption
                                     )
-                            print('Type of Signed Message:',type(signed_message))
+                            # print('Type of Signed Message:',type(signed_message))
                             # Send Authenticated message with signature 
                          
                             client_socket.sendall(convert_int_to_bytes(len(signed_message)))

@@ -134,8 +134,8 @@ def main(args):
                 with open(filename, mode="rb") as fp:
                     data = fp.read()
                     enc_data,size = encrypt_with_publicKey(data,len(data),server_public_key)
-                    print(size)
-                    print(len(enc_data))
+                    # print(size)
+                    # print(len(enc_data))
                     filename_enc = "enc_" + filename.split("/")[-1]
                      # Write the file with 'recv_' prefix
                     with open(f"send_files_enc/{filename_enc}", mode="wb" ) as fp:
