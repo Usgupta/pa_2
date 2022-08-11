@@ -1,4 +1,3 @@
-from asyncore import read
 import pathlib
 import socket
 import sys

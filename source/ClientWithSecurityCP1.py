@@ -128,13 +128,18 @@ def main(args):
                 s.sendall(convert_int_to_bytes(0))
                 s.sendall(convert_int_to_bytes(len(filename_bytes)))
                 s.sendall(filename_bytes)
+                
 
                 # Send the file
                 with open(filename, mode="rb") as fp:
                     data = fp.read()
                     enc_data,size = encrypt_with_publicKey(data,len(data),server_public_key)
-                    print(size)
-                    print(len(enc_data))
+                    # print(size)
+                    # print(len(enc_data))
+                    filename_enc = "enc_" + filename.split("/")[-1]
+                     # Write the file with 'recv_' prefix
+                    with open(f"send_files_enc/{filename_enc}", mode="wb" ) as fp:
+                        fp.write(enc_data)
                     
                     s.sendall(convert_int_to_bytes(1))
                     s.sendall(convert_int_to_bytes(size))

@@ -101,13 +101,27 @@ def main(args):
                             filename = "recv_" + filename.split("/")[-1]
                             #Get Private Key
                             try:
-                                with open("/Users/visshal/Documents/GitHub/pa_2/source/auth/server_private_key.pem", mode="r", encoding="utf8") as key_file:
+                                with open("auth/server_private_key.pem", mode="r", encoding="utf8") as key_file:
                                     private_key = serialization.load_pem_private_key(bytes(key_file.read(), encoding="utf8"), password=None )
                             except Exception as e:
                                 print(e)
+                            
+                            # Write the file with 'recv_' prefix
+                            filename_dec = "enc_" + filename.split("/")[-1]
+
+                            with open(
+                                f"recv_files_enc/{filename_dec}", mode="wb"
+                            ) as fp:
+                                fp.write(file_data)
+                            print(
+                                f"Finished receiving file in {(time.time() - start_time)}s!"
+                            )
 
                             file_data = session_key.decrypt(file_data)
-                            print(file_data)
+                            # print(file_data)
+
+                             
+                            
 
                             # Write the file with 'recv_' prefix
                             with open(
@@ -129,17 +143,17 @@ def main(args):
                                     private_key = serialization.load_pem_private_key(bytes(key_file.read(), encoding="utf8"), password=None )
                             except Exception as e:
                                 print(e)
-                            authmsg_len = convert_bytes_to_int(read_bytes(client_socket, 8))
-                            authmsg = read_bytes(client_socket, authmsg_len)
+                            nonce_len = convert_bytes_to_int(read_bytes(client_socket, 8))
+                            nonce_bytes = read_bytes(client_socket, nonce_len)
                             signed_message = private_key.sign(
-                                authmsg, # message in bytes format
+                                nonce_bytes, # message in bytes format
                                 padding.PSS(
                                     mgf=padding.MGF1(hashes.SHA256()),
                                     salt_length=padding.PSS.MAX_LENGTH,
                                     ),
                                     hashes.SHA256(), # hashing algorithm used to hash the data before encryption
                                     )
-                            print('Type of Signed Message:',type(signed_message))
+                            # print('Type of Signed Message:',type(signed_message))
                             # Send Authenticated message with signature 
                          
                             client_socket.sendall(convert_int_to_bytes(len(signed_message)))
