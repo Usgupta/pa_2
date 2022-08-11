@@ -54,8 +54,7 @@ def main(args):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             s.bind((address, port))
             s.listen()
-           
-
+            
             client_socket, client_address = s.accept()
             with client_socket:
                 while True:

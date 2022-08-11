@@ -1,3 +1,4 @@
+from asyncore import read
 import pathlib
 import socket
 import sys
@@ -102,18 +103,24 @@ def main(args):
                                     private_key = serialization.load_pem_private_key(bytes(key_file.read(), encoding="utf8"), password=None )
                             except Exception as e:
                                 print(e)
-                            authmsg_len = convert_bytes_to_int(read_bytes(client_socket, 8))
-                            authmsg = read_bytes(client_socket, authmsg_len)
+                            nonce_len = convert_bytes_to_int(read_bytes(client_socket, 8))
+                            nonce_bytes = read_bytes(client_socket, nonce_len)
                             signed_message = private_key.sign(
-                                authmsg, # message in bytes format
+                                nonce_bytes, # message in bytes format
                                 padding.PSS(
                                     mgf=padding.MGF1(hashes.SHA256()),
                                     salt_length=padding.PSS.MAX_LENGTH,
                                     ),
                                     hashes.SHA256(), # hashing algorithm used to hash the data before encryption
                                     )
+                            # #get nonce
+                            # nonce_len = convert_bytes_to_int(read_bytes(client_socket, 8))
+                            # nonce = read_bytes(client_socket,nonce_len)
+
+
                             # Send Authenticated message with signature 
-                         
+                            
+                
                             client_socket.sendall(convert_int_to_bytes(len(signed_message)))
                             client_socket.sendall(signed_message)
 
