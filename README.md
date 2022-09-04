@@ -1,4 +1,4 @@
-#Secure File Transfer
+# Secure File Transfer
 
 Implemented a secure file upload application from a client to a secure file server. By secure, we mean three fulfilled requirements:
 
@@ -7,7 +7,7 @@ Implemented a secure file upload application from a client to a secure file serv
    3. Thirdly, while carrying out the upload you should be able to protect the confidentiality of the data against eavesdropping by any curious adversaries.
 
 
-##How to Run
+## Instructions to Run the Program
 
 Run python3 Server and Client python file in two terminal windows:
 
